@@ -80,7 +80,13 @@ curl_close($curl);
 unlink($tempfilename);
 
 $dom = new DOMDocument;
-$dom->loadHTML($result);
+$dom->loadHTML('<?xml encoding="UTF-8">' . $result);
+// dirty fix
+foreach ($dom->childNodes as $item)
+    if ($item->nodeType == XML_PI_NODE)
+        $dom->removeChild($item); // remove hack
+$dom->encoding = 'UTF-8'; // insert proper
+
 $heads = $dom->getElementsByTagName('head');
 $head_base = $dom->createElement('base');
 $refs = $heads[0]->getElementsByTagName('*');
